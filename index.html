@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAVFORM — Music Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══════════════ AUTH SCREEN ═══════════════ -->
+<div id="auth-screen">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <div class="auth-logo">WAV<span>FORM</span></div>
+    <div class="auth-tagline">YOUR SOUND. YOUR WORLD.</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login',this)">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('signup',this)">Create Account</button>
+    </div>
+
+    <!-- Login fields -->
+    <div id="login-fields">
+      <div class="auth-field">
+        <label class="auth-label">EMAIL</label>
+        <input class="auth-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">PASSWORD</label>
+        <input class="auth-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+    </div>
+
+    <!-- Signup fields -->
+    <div id="signup-fields" style="display:none;">
+      <div class="auth-field">
+        <label class="auth-label">FULL NAME</label>
+        <input class="auth-input" id="su-name" type="text" placeholder="Your name">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">EMAIL</label>
+        <input class="auth-input" id="su-email" type="email" placeholder="you@example.com">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">PASSWORD</label>
+        <input class="auth-input" id="su-pass" type="password" placeholder="Min. 6 characters">
+      </div>
+      <button class="auth-btn" onclick="doSignup()">Create Account</button>
+    </div>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <div class="auth-divider">
+      <div class="auth-divider-line"></div>
+      <div class="auth-divider-text">OR</div>
+      <div class="auth-divider-line"></div>
+    </div>
+
+    <button class="guest-btn" onclick="enterAsGuest()">Continue as Guest</button>
+
+    <div class="auth-footer">
+      By signing in you agree to WAVFORM's<br>Terms of Service &amp; Privacy Policy
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP SCREEN ═══════════════ -->
+<div id="app-screen">
+
+  <aside class="sidebar">
+    <div class="logo">WAV<span>FORM</span></div>
+    <div class="user-chip">
+      <div class="avatar" id="user-avatar">?</div>
+      <div class="username-lbl" id="user-name">Guest</div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+
+    <nav class="nav-section">
+      <div class="nav-label">LIBRARY</div>
+      <div class="nav-item active" onclick="switchPlaylist('all',this)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        All Tracks <span class="badge" id="all-count">12</span>
+      </div>
+      <div class="nav-item" onclick="switchPlaylist('favorites',this)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Favorites <span class="badge" id="fav-count">0</span>
+      </div>
+    </nav>
+    <nav class="nav-section">
+      <div class="nav-label">PLAYLISTS</div>
+      <div class="nav-item" onclick="switchPlaylist('latenight',this)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        Late Night
+      </div>
+      <div class="nav-item" onclick="switchPlaylist('energy',this)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Energy Rush
+      </div>
+      <div class="nav-item" onclick="switchPlaylist('chill',this)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 16.1A5 5 0 0 1 5.5 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><line x1="2" y1="20" x2="2.01" y2="20"/></svg>
+        Chill Waves
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar-label"><span>STORAGE</span><span>2.1 / 5 GB</span></div>
+      <div class="storage-track"><div class="storage-fill"></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="hero">
+      <div class="hero-bg" id="hero-bg"></div>
+      <div class="hero-content">
+        <div class="album-art">
+          <div class="art-emoji" id="art-emoji">🎸</div>
+          <div class="spinning-ring"></div>
+        </div>
+        <div class="track-meta">
+          <div class="track-tag">NOW PLAYING</div>
+          <h1 class="track-title" id="np-title">Neon Wanderer</h1>
+          <div class="track-artist" id="np-artist">The Echoes</div>
+          <div class="track-album" id="np-album">Synthetic Horizon · 2024</div>
+          <button class="fav-hero-btn" id="fav-hero-btn" onclick="toggleCurrentFav()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="fav-hero-label">Save</span>
+          </button>
+        </div>
+      </div>
+      <div class="waveform" id="waveform"></div>
+    </section>
+
+    <section class="controls-bar">
+      <div class="progress-section">
+        <span class="time-label" id="cur-time">0:00</span>
+        <div class="progress-wrap">
+          <div class="progress-bg"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          <input type="range" class="progress-input" id="progress-input" min="0" max="100" value="0" oninput="seekTo(this.value)">
+        </div>
+        <span class="time-label" id="tot-time">3:47</span>
+      </div>
+      <div class="controls-row">
+        <div class="secondary-controls left">
+          <button class="ctrl-sm" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          </button>
+          <button class="ctrl-sm" id="repeat-btn" onclick="toggleRepeat()" title="Repeat">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </button>
+        </div>
+        <div class="main-controls">
+          <button class="ctrl-md" onclick="prevTrack()">
+            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="play-btn" id="play-btn" onclick="togglePlay()">
+            <svg id="play-icon" width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <button class="ctrl-md" onclick="nextTrack()">
+            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+        </div>
+        <div class="secondary-controls right">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--muted)"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+          <input type="range" class="vol-input" id="vol-input" min="0" max="100" value="70" oninput="setVolume(this.value)">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--muted)"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="track-section">
+      <div class="section-header">
+        <h2 id="section-title">All Tracks</h2>
+        <div class="sort-row">
+          <span class="sort-label">Sort by</span>
+          <select onchange="sortTracks(this.value)">
+            <option value="default">Default</option>
+            <option value="title">Title</option>
+            <option value="artist">Artist</option>
+            <option value="duration">Duration</option>
+          </select>
+        </div>
+      </div>
+      <div class="track-list" id="track-list"></div>
+    </section>
+  </main>
+
+  <aside class="queue-panel">
+    <div class="queue-header">
+      <div><div class="queue-title">Up Next</div><div class="queue-sub" id="queue-sub">0 tracks</div></div>
+      <button class="clear-btn" onclick="clearQueue()">Clear</button>
+    </div>
+    <div class="queue-list" id="queue-list"></div>
+  </aside>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
